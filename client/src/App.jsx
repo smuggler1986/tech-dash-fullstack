@@ -94,14 +94,13 @@ export default function App() {
                 <th className="py-2 px-2 text-left">WIP</th>
                 <th className="py-2 px-2 text-left">Reg</th>
                 <th className="py-2 px-2 text-left">Work</th>
-                <th className="py-2 px-2 text-left">Submitted At</th>
-<th className="py-2 px-2 text-left">Status</th>
+                <th className="py-2 px-2 text-left">Status</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               {requests.map((r, i) => (
-                <tr key={i} className="border-t hover:bg-gray-50 cursor-pointer" onClick={() => { setSelected(r); setPage("view"); }}>
+                <tr key={i} className="border-t hover:bg-gray-50">
                   <td className="px-2 py-1">{r.wip}</td>
                   <td className="px-2 py-1">{r.reg}</td>
                   <td className="px-2 py-1">{r.work}</td>
@@ -115,7 +114,7 @@ export default function App() {
       </span>
     </td>
                   <td className="px-2 py-1 text-right space-x-2">
-                                        <button onClick={() => { setSelected(r); setPage("view"); }} className="text-blue-600 hover:underline">View</button>
+                    <button onClick={() => { setSelected(r); setPage("view"); }} className="text-blue-600 hover:underline">View</button>
                     <button onClick={() => deleteRequest(r.id)} className="text-red-500 hover:underline">🛠 Delete</button>
                   </td>
                 </tr>
@@ -133,7 +132,7 @@ export default function App() {
 
       {page === "form" && (
         <div>
-          <button className="text-blue-600 mb-4" onClick={() => { setSelected(null); setPage("status"); }}>← Back</button>
+          <button className="text-blue-600 mb-4" onClick={() => setPage("status")}>← Back</button>
           <h2 className="text-xl font-semibold mb-4">Add Request</h2>
           <input
             type="number"
@@ -147,7 +146,7 @@ export default function App() {
             placeholder="Registration Number"
             required
             value={form.reg}
-            onChange={(e) => setForm({ ...form, reg: e.target.value.toUpperCase() })}
+            onChange={(e) => setForm({ ...form, reg: e.target.value })}
             className="block w-full border rounded px-3 py-2 mb-2"
           />
           <textarea
@@ -203,7 +202,7 @@ export default function App() {
           </button>
         
           <button
-            onClick={() => { updateStatus(selected.id, selected); setPage("status"); }}
+            onClick={() => setPage("status")}
             className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full shadow hover:bg-blue-700"
           >
             Save
@@ -214,12 +213,11 @@ export default function App() {
 
       {page === "view" && selected && (
         <div>
-          <button className="text-blue-600 mb-4" onClick={() => { setSelected(null); setPage("status"); }}>← Back</button>
+          <button className="text-blue-600 mb-4" onClick={() => setPage("status")}>← Back</button>
           <h2 className="text-xl font-semibold mb-4">Review Request</h2>
           <p><strong>WIP:</strong> {selected.wip}</p>
           <p><strong>Reg:</strong> {selected.reg}</p>
           <p><strong>Work:</strong> {selected.work}</p>
-<p><strong>Submitted At:</strong> {selected.submittedAt ? new Date(selected.submittedAt).toLocaleString() : "-"}</p>
           <table className="w-full text-xs border my-4">
             <thead>
               <tr className="bg-gray-100">
@@ -236,7 +234,7 @@ export default function App() {
                   <td className="px-2 py-1">{t.time}</td>
                   <td className="px-2 py-1">{t.notes}</td>
                   <td className="px-2 py-1">
-                    <select className="text-xs rounded px-2 py-1 border"
+                    <select
                       value={t.status}
                       onChange={(e) => {
                         const tasks = [...selected.tasks];
@@ -246,9 +244,9 @@ export default function App() {
                         setSelected({ ...selected, tasks, status });
                       }}
                     >
-                      <option value="Authorised">Authorised</option>
-                      <option value="Declined">Declined</option>
-                      <option value="Awaiting customer callback">Awaiting customer callback</option>
+                      <option>Authorised</option>
+                      <option>Declined</option>
+                      <option>Awaiting customer callback</option>
                     </select>
                   </td>
                 </tr>
@@ -261,7 +259,7 @@ export default function App() {
           </div>
         
           <button
-            onClick={() => { updateStatus(selected.id, selected); setPage("status"); }}
+            onClick={() => setPage("status")}
             className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full shadow hover:bg-blue-700"
           >
             Save
