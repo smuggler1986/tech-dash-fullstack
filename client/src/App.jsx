@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 
-const API = "http://localhost:3001";
+const API = "https://tech-dash-api.onrender.com";
 
 export default function App() {
   const [page, setPage] = useState("status");
