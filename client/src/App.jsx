@@ -10,7 +10,7 @@ export default function App() {
     wip: "",
     reg: "",
     work: "",
-    overallLabour: "0.1",
+    
     overallStatus: "Pending",
     tasks: []
   });
@@ -151,7 +151,10 @@ export default function App() {
               </tbody>
             </table>
             <div className="text-center mt-6">
-              <button onClick={() => setPage("form")} className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+              <button onClick={() => {
+      setForm({ wip: "", reg: "", work: "", tasks: [] });
+      setPage("form");
+    }} className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
                 Add New Request
               </button>
             </div>
@@ -160,10 +163,9 @@ export default function App() {
 
         {page === "form" && (
           <form onSubmit={submitForm}>
-            <input placeholder="WIP Number" required value={form.wip} onChange={e => setForm({ ...form, wip: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
-            <input placeholder="Registration Number" required value={form.reg} onChange={e => setForm({ ...form, reg: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
-            <textarea placeholder="Work Description" required value={form.work} onChange={e => setForm({ ...form, work: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
-            <input type="number" step="0.1" placeholder="Overall Labour Time" value={form.overallLabour} onChange={e => setForm({ ...form, overallLabour: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
+            <input type="number" required placeholder="WIP Number" required value={form.wip} onChange={e => setForm({ ...form, wip: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
+            <input required placeholder="Registration Number" required value={form.reg} onChange={e => setForm({ ...form, reg: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
+            <textarea placeholder="Fault/repair work needed" required value={form.work} onChange={e => setForm({ ...form, work: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />setForm({ ...form, overallLabour: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
             
             {form.tasks.map((t, i) => (
               <div key={i} className="flex gap-2 mb-2 items-center">
@@ -182,19 +184,13 @@ export default function App() {
           <>
         {!selected.tasks?.length && (
           <div className="mb-4">
-            <label className="block text-sm text-gray-600 mb-1">Overall Labour Time</label>
-            <input
-              value={selected.overallLabour}
-              readOnly
-              className="w-32 border text-center px-2 py-1 rounded bg-gray-100 mb-2"
-            />
-            <label className="block text-sm text-gray-600 mb-1">Status</label>
+            <label className="block text-sm text-gray-600 mb-1">Overall Labour Time</label><label className="block text-sm text-gray-600 mb-1">Status</label>
             <select
               value={selected.status}
               onChange={e => setSelected({ ...selected, status: e.target.value })}
               className="border rounded px-3 py-1"
             >
-              <option>Pending</option>
+              
               <option>Authorised</option>
               <option>Declined</option>
               <option>Awaiting customer callback</option>
@@ -219,7 +215,7 @@ export default function App() {
                     <input value={t.time} readOnly className="w-20 border text-center px-2 py-1 rounded bg-gray-100" />
                     <label className="text-sm"><input type="checkbox" checked={t.parts} readOnly className="mr-1" /> Parts?</label>
                     <select value={t.status} onChange={e => updateTaskStatus(i, e.target.value)} className="border rounded px-2 py-1 text-sm">
-                      <option>Pending</option>
+                      
                       <option>Authorised</option>
                       <option>Declined</option>
                       <option>Awaiting customer callback</option>
