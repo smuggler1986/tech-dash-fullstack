@@ -32,21 +32,9 @@ app.post("/requests", async (req, res) => {
 app.patch("/requests/:id", async (req, res) => {
   const { status, tasks } = req.body;
   const db = await dbPromise;
-
-  let newStatus = status;
-  if (Array.isArray(tasks)) {
-    const approvedCount = tasks.filter(t => t.approved).length;
-    const totalCount = tasks.length;
-    if (approvedCount > 0 && approvedCount < totalCount) {
-      newStatus = "Partially approved";
-    } else if (approvedCount === totalCount && totalCount > 0) {
-      newStatus = "Authorised";
-    }
-  }
-
   await db.run(
     "UPDATE requests SET status = ?, tasks = ? WHERE id = ?",
-    [newStatus, JSON.stringify(tasks), req.params.id]
+    [status, JSON.stringify(tasks), req.params.id]
   );
   res.json({ success: true });
 });
