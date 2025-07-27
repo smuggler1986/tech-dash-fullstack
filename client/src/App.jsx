@@ -1,5 +1,5 @@
 
-// Full Tech Dash v1.4.2 - Final Logic Applied Here
+// Full working logic - Tech Dash v1.4.3
 import React, { useState, useEffect } from "react";
 
 const API = "https://tech-dash-api.onrender.com";
@@ -14,25 +14,34 @@ export default function App() {
     fetch(API + "/requests").then(res => res.json()).then(setRequests);
   }, []);
 
-  const totalLabour = (r, approvedOnly = false) => {
+  const totalLabour = (r, filteredStatus = null) => {
     if (r.overallLabour) return Math.max(0, parseFloat(r.overallLabour || 0));
     const list = Array.isArray(r.tasks) ? r.tasks : [];
     return list.reduce((sum, t) => {
-      if (approvedOnly && !t.approved) return sum;
+      if (filteredStatus && t.status !== filteredStatus) return sum;
       return sum + Math.max(0, parseFloat(t.time || 0));
     }, 0);
   };
 
   const approvedHours = requests
-    .filter(r => ["Authorised", "Partially approved"].includes(r.status))
-    .reduce((a, r) => a + totalLabour(r, true), 0);
+    .filter(r => ["Authorised", "Partially authorised"].includes(r.status))
+    .reduce((a, r) => a + totalLabour(r, "Authorised"), 0);
 
   const requestedHours = requests
-    .filter(r => ["Pending", "Declined", "Awaiting customer contact", "Partially approved"].includes(r.status))
+    .filter(r => ["Pending", "Declined", "Awaiting customer callback", "Partially authorised"].includes(r.status))
     .reduce((a, r) => a + totalLabour(r), 0);
 
+  const deriveStatusFromTasks = (tasks) => {
+    const statuses = tasks.map(t => t.status);
+    const unique = [...new Set(statuses)];
+    if (unique.length === 1) return unique[0];
+    if (unique.includes("Awaiting customer callback")) return "Awaiting customer callback";
+    if (unique.includes("Authorised")) return "Partially authorised";
+    return "Pending";
+  };
+
   const addTask = () => {
-    setForm({ ...form, tasks: [...form.tasks, { desc: "", time: 0.0, parts: false, approved: false }] });
+    setForm({ ...form, tasks: [...form.tasks, { desc: "", time: 0.0, parts: false, status: "Pending" }] });
   };
 
   const updateTask = (index, field, value) => {
@@ -50,10 +59,11 @@ export default function App() {
 
   const submitForm = (e) => {
     e.preventDefault();
+    const status = form.tasks.length ? deriveStatusFromTasks(form.tasks) : "Pending";
     fetch(API + "/requests", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, status: "Pending" })
+      body: JSON.stringify({ ...form, status })
     }).then(res => res.json()).then(data => {
       setRequests([...requests, data]);
       setPage("status");
@@ -61,30 +71,45 @@ export default function App() {
   };
 
   const saveUpdate = () => {
+    const updatedStatus = selected.tasks.length ? deriveStatusFromTasks(selected.tasks) : selected.status;
     fetch(API + "/requests/" + selected.id, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tasks: selected.tasks, status: selected.status })
+      body: JSON.stringify({ tasks: selected.tasks, status: updatedStatus })
     }).then(() => {
-      setRequests(requests.map(r => r.id === selected.id ? selected : r));
+      setRequests(requests.map(r => r.id === selected.id ? { ...selected, status: updatedStatus } : r));
       setPage("status");
     });
   };
 
+  const updateTaskStatus = (i, newStatus) => {
+    const updated = { ...selected };
+    updated.tasks[i].status = newStatus;
+    setSelected(updated);
+  };
+
   const approveAllTasks = () => {
-    if (!selected?.tasks) return;
-    setSelected({
+    const updated = {
       ...selected,
-      tasks: selected.tasks.map(t => ({ ...t, approved: true }))
-    });
+      tasks: selected.tasks.map(t => ({ ...t, status: "Authorised" }))
+    };
+    setSelected(updated);
+  };
+
+  const declineAllTasks = () => {
+    const updated = {
+      ...selected,
+      tasks: selected.tasks.map(t => ({ ...t, status: "Declined" }))
+    };
+    setSelected(updated);
   };
 
   const statusColor = (status) => {
     switch (status) {
       case "Authorised": return "bg-green-600";
       case "Declined": return "bg-red-500";
-      case "Partially approved": return "bg-yellow-500";
-      case "Awaiting customer contact": return "bg-orange-500";
+      case "Partially authorised": return "bg-yellow-500";
+      case "Awaiting customer callback": return "bg-orange-500";
       default: return "bg-gray-400";
     }
   };
@@ -115,7 +140,7 @@ export default function App() {
                     <td>{r.reg}</td>
                     <td>{r.work}</td>
                     <td><span className={`text-white text-xs px-2 py-1 rounded-full ${statusColor(r.status)}`}>{r.status}</span></td>
-                    <td>{totalLabour(r, true).toFixed(1)}</td>
+                    <td>{totalLabour(r, "Authorised").toFixed(1)}</td>
                     <td>{totalLabour(r).toFixed(1)}</td>
                   </tr>
                 ))}
@@ -140,6 +165,12 @@ export default function App() {
                 <input value={t.desc} onChange={e => updateTask(i, "desc", e.target.value)} placeholder="Task" className="border px-2 py-1 rounded w-full" />
                 <input type="number" step="0.1" value={t.time} onChange={e => updateTask(i, "time", e.target.value)} className="w-20 border text-center px-2 py-1 rounded" />
                 <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={t.parts} onChange={e => updateTask(i, "parts", e.target.checked)} /> Parts required?</label>
+                <select value={t.status} onChange={e => updateTask(i, "status", e.target.value)} className="border rounded px-2 py-1 text-sm">
+                  <option>Pending</option>
+                  <option>Authorised</option>
+                  <option>Declined</option>
+                  <option>Awaiting customer callback</option>
+                </select>
                 <button type="button" onClick={() => removeTask(i)} className="text-red-500 text-sm">✕</button>
               </div>
             ))}
@@ -154,30 +185,24 @@ export default function App() {
             <p><strong>WIP:</strong> {selected.wip}</p>
             <p><strong>Reg:</strong> {selected.reg}</p>
             <p><strong>Work:</strong> {selected.work}</p>
-            <div className="my-2">
-              <label className="block text-sm font-medium text-gray-600 mb-1">Status</label>
-              <select value={selected.status} onChange={e => setSelected({ ...selected, status: e.target.value })} className="border rounded px-3 py-2">
-                <option>Pending</option>
-                <option>Authorised</option>
-                <option>Declined</option>
-                <option>Partially approved</option>
-                <option>Awaiting customer contact</option>
-              </select>
+            <div className="my-2 text-sm">
+              <strong>Status:</strong> <span className={`inline-block text-white px-2 py-1 rounded-full ${statusColor(selected.status)}`}>{selected.status}</span>
             </div>
-            <button onClick={approveAllTasks} className="text-blue-600 text-sm mb-2">Approve All</button>
+            <div className="flex gap-4 text-sm mb-2">
+              <button onClick={approveAllTasks} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Approve All</button>
+              <button onClick={declineAllTasks} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Decline All</button>
+            </div>
             {(selected.tasks || []).map((t, i) => (
               <div key={i} className="flex gap-2 mb-2 items-center">
                 <input value={t.desc} readOnly className="border px-2 py-1 rounded w-full bg-gray-100" />
                 <input value={t.time} readOnly className="w-20 border text-center px-2 py-1 rounded bg-gray-100" />
                 <label className="flex items-center gap-1 text-sm"><input type="checkbox" checked={t.parts} readOnly /> Parts?</label>
-                <label className="flex items-center gap-1 text-sm">
-                  <input type="checkbox" checked={t.approved} onChange={e => {
-                    const updated = { ...selected };
-                    updated.tasks[i].approved = e.target.checked;
-                    setSelected(updated);
-                  }} />
-                  Approved
-                </label>
+                <select value={t.status} onChange={e => updateTaskStatus(i, e.target.value)} className="border rounded px-2 py-1 text-sm">
+                  <option>Pending</option>
+                  <option>Authorised</option>
+                  <option>Declined</option>
+                  <option>Awaiting customer callback</option>
+                </select>
               </div>
             ))}
             <div className="mt-4">
