@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const backendURL = "https://your-backend-service-name.onrender.com";
+const backendURL = "https://tech-dash-api.onrender.com";
 
 export default function App() {
   const [page, setPage] = useState("status");
