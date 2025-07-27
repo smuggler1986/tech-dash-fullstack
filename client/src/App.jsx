@@ -115,7 +115,8 @@ export default function App() {
       </span>
     </td>
                   <td className="px-2 py-1 text-right space-x-2">
-                                        <button onClick={() => deleteRequest(r.id)} className="text-red-500 hover:underline">🛠 Delete</button>
+                                        <button onClick={() => { setSelected(r); setPage("view"); }} className="text-blue-600 hover:underline">View</button>
+                    <button onClick={() => deleteRequest(r.id)} className="text-red-500 hover:underline">🛠 Delete</button>
                   </td>
                 </tr>
               ))}
