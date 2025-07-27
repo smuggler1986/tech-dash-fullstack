@@ -19,7 +19,7 @@ export default function App() {
     fetch(API + "/requests", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, status: "Pending" }),
+      body: JSON.stringify({ ...form, status: "Pending", submittedAt: new Date().toISOString() }),
     })
       .then((res) => res.json())
       .then((newReq) => {
@@ -94,7 +94,8 @@ export default function App() {
                 <th className="py-2 px-2 text-left">WIP</th>
                 <th className="py-2 px-2 text-left">Reg</th>
                 <th className="py-2 px-2 text-left">Work</th>
-                <th className="py-2 px-2 text-left">Status</th>
+                <th className="py-2 px-2 text-left">Submitted At</th>
+<th className="py-2 px-2 text-left">Status</th>
                 <th></th>
               </tr>
             </thead>
@@ -146,7 +147,7 @@ export default function App() {
             placeholder="Registration Number"
             required
             value={form.reg}
-            onChange={(e) => setForm({ ...form, reg: e.target.value })}
+            onChange={(e) => setForm({ ...form, reg: e.target.value.toUpperCase() })}
             className="block w-full border rounded px-3 py-2 mb-2"
           />
           <textarea
