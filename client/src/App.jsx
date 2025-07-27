@@ -10,7 +10,7 @@ export default function App() {
     wip: "",
     reg: "",
     work: "",
-    overallLabour: "",
+    overallLabour: "0.1",
     overallStatus: "Pending",
     tasks: []
   });
@@ -164,14 +164,7 @@ export default function App() {
             <input placeholder="Registration Number" required value={form.reg} onChange={e => setForm({ ...form, reg: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
             <textarea placeholder="Work Description" required value={form.work} onChange={e => setForm({ ...form, work: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
             <input type="number" step="0.1" placeholder="Overall Labour Time" value={form.overallLabour} onChange={e => setForm({ ...form, overallLabour: e.target.value })} className="block w-full border rounded px-3 py-2 mb-2" />
-            {form.tasks.length === 0 && (
-              <select value={form.overallStatus} onChange={e => setForm({ ...form, overallStatus: e.target.value })} className="block w-full border rounded px-3 py-2 mb-4">
-                <option value="Pending">Pending</option>
-                <option value="Authorised">Authorised</option>
-                <option value="Declined">Declined</option>
-                <option value="Awaiting customer callback">Awaiting customer callback</option>
-              </select>
-            )}
+            
             {form.tasks.map((t, i) => (
               <div key={i} className="flex gap-2 mb-2 items-center">
                 <input value={t.desc} onChange={e => updateTask(i, "desc", e.target.value)} placeholder="Task" className="border px-2 py-1 rounded w-full" />
@@ -187,6 +180,28 @@ export default function App() {
 
         {page === "view" && selected && (
           <>
+        {!selected.tasks?.length && (
+          <div className="mb-4">
+            <label className="block text-sm text-gray-600 mb-1">Overall Labour Time</label>
+            <input
+              value={selected.overallLabour}
+              readOnly
+              className="w-32 border text-center px-2 py-1 rounded bg-gray-100 mb-2"
+            />
+            <label className="block text-sm text-gray-600 mb-1">Status</label>
+            <select
+              value={selected.status}
+              onChange={e => setSelected({ ...selected, status: e.target.value })}
+              className="border rounded px-3 py-1"
+            >
+              <option>Pending</option>
+              <option>Authorised</option>
+              <option>Declined</option>
+              <option>Awaiting customer callback</option>
+            </select>
+          </div>
+        )}
+    
             <h2 className="text-xl font-semibold mb-2">Request Detail</h2>
             <p><strong>WIP:</strong> {selected.wip}</p>
             <p><strong>Reg:</strong> {selected.reg}</p>
