@@ -48,7 +48,7 @@ export default function App() {
   const calculateStatus = (tasks) => {
     if (tasks.every((t) => t.status === "Declined")) return "Declined";
     if (tasks.some((t) => t.status === "Awaiting customer callback")) return "Awaiting customer callback";
-    if (tasks.some((t) => t.status === "Authorised") && !tasks.every((t) => t.status === "Authorised")) return "Partially authorised";
+    if (tasks.some((t) => t.status === "Authorised") && tasks.some((t) => t.status !== "Authorised")) return "Partially authorised";
     if (tasks.every((t) => t.status === "Authorised")) return "Authorised";
     return "Pending";
   };
