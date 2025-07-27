@@ -45,7 +45,7 @@ export default function App() {
   const addTask = () => {
     setForm((f) => ({
       ...f,
-      tasks: [...f.tasks, { desc: "", time: 0.0, parts: false, status: "Pending" }],
+      tasks: [...f.tasks, { desc: "", time: 0.1, parts: false, status: "Pending" }],
     }));
   };
 
