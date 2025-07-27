@@ -16,7 +16,7 @@ const init = async () => {
     driver: sqlite3.Database,
   });
 
-  await db.run(\`
+  await db.run(`
     CREATE TABLE IF NOT EXISTS requests (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       wip TEXT,
