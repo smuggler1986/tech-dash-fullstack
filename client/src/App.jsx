@@ -104,7 +104,15 @@ export default function App() {
                   <td className="px-2 py-1">{r.wip}</td>
                   <td className="px-2 py-1">{r.reg}</td>
                   <td className="px-2 py-1">{r.work}</td>
-                  <td className="px-2 py-1">{r.status}</td>
+                  <td className="px-2 py-1">
+      <span className={`text-white px-3 py-1 rounded-full text-xs ${
+        r.status === "Authorised" ? "bg-green-500" :
+        r.status === "Declined" ? "bg-red-500" :
+        r.status === "Awaiting customer callback" ? "bg-yellow-400" : "bg-gray-400"
+      }`}>
+        {r.status}
+      </span>
+    </td>
                   <td className="px-2 py-1 text-right space-x-2">
                     <button onClick={() => { setSelected(r); setPage("view"); }} className="text-blue-600 hover:underline">View</button>
                     <button onClick={() => deleteRequest(r.id)} className="text-red-500 hover:underline">🛠 Delete</button>
@@ -192,8 +200,16 @@ export default function App() {
           >
             Submit Request
           </button>
+        
+          <button
+            onClick={() => setPage("status")}
+            className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full shadow hover:bg-blue-700"
+          >
+            Save
+          </button>
         </div>
       )}
+
 
       {page === "view" && selected && (
         <div>
@@ -241,8 +257,16 @@ export default function App() {
             <button onClick={approveAll} className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">Approve All</button>
             <button onClick={declineAll} className="bg-red-600 text-white px-3 py-1 rounded-full text-sm">Decline All</button>
           </div>
+        
+          <button
+            onClick={() => setPage("status")}
+            className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full shadow hover:bg-blue-700"
+          >
+            Save
+          </button>
         </div>
       )}
+
     </div>
   );
 }
