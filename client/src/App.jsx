@@ -202,7 +202,7 @@ export default function App() {
           </button>
         
           <button
-            onClick={() => { updateStatus(selected.id, selected); setPage("status"); }}
+            onClick={() => { setSelected(null); setPage("status"); }}
             className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full shadow hover:bg-blue-700"
           >
             Save
@@ -260,7 +260,7 @@ export default function App() {
           </div>
         
           <button
-            onClick={() => { updateStatus(selected.id, selected); setPage("status"); }}
+            onClick={() => { setSelected(null); setPage("status"); }}
             className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full shadow hover:bg-blue-700"
           >
             Save
