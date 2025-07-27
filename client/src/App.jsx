@@ -101,7 +101,7 @@ export default function App() {
             </thead>
             <tbody>
               {requests.map((r, i) => (
-                <tr key={i} className="border-t hover:bg-gray-50">
+                <tr key={i} className="border-t hover:bg-gray-50 cursor-pointer" onClick={() => { setSelected(r); setPage("view"); }}>
                   <td className="px-2 py-1">{r.wip}</td>
                   <td className="px-2 py-1">{r.reg}</td>
                   <td className="px-2 py-1">{r.work}</td>
@@ -115,8 +115,7 @@ export default function App() {
       </span>
     </td>
                   <td className="px-2 py-1 text-right space-x-2">
-                    <button onClick={() => { setSelected(r); setPage("view"); }} className="text-blue-600 hover:underline">View</button>
-                    <button onClick={() => deleteRequest(r.id)} className="text-red-500 hover:underline">🛠 Delete</button>
+                                        <button onClick={() => deleteRequest(r.id)} className="text-red-500 hover:underline">🛠 Delete</button>
                   </td>
                 </tr>
               ))}
@@ -219,6 +218,7 @@ export default function App() {
           <p><strong>WIP:</strong> {selected.wip}</p>
           <p><strong>Reg:</strong> {selected.reg}</p>
           <p><strong>Work:</strong> {selected.work}</p>
+<p><strong>Submitted At:</strong> {selected.submittedAt ? new Date(selected.submittedAt).toLocaleString() : "-"}</p>
           <table className="w-full text-xs border my-4">
             <thead>
               <tr className="bg-gray-100">
@@ -235,7 +235,7 @@ export default function App() {
                   <td className="px-2 py-1">{t.time}</td>
                   <td className="px-2 py-1">{t.notes}</td>
                   <td className="px-2 py-1">
-                    <select
+                    <select className="text-xs rounded px-2 py-1 border"
                       value={t.status}
                       onChange={(e) => {
                         const tasks = [...selected.tasks];
@@ -245,9 +245,9 @@ export default function App() {
                         setSelected({ ...selected, tasks, status });
                       }}
                     >
-                      <option>Authorised</option>
-                      <option>Declined</option>
-                      <option>Awaiting customer callback</option>
+                      <option value="Authorised">Authorised</option>
+                      <option value="Declined">Declined</option>
+                      <option value="Awaiting customer callback">Awaiting customer callback</option>
                     </select>
                   </td>
                 </tr>
