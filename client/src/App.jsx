@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API = "http://localhost:3001"; // Change to your Render backend URL after deploy
+const API = "https://tech-dash-api.onrender.com"; // Change to your Render backend URL after deploy
 
 export default function App() {
   const [page, setPage] = useState("status");
