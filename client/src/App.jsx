@@ -132,7 +132,7 @@ export default function App() {
 
       {page === "form" && (
         <div>
-          <button className="text-blue-600 mb-4" onClick={() => setPage("status")}>← Back</button>
+          <button className="text-blue-600 mb-4" onClick={() => { setSelected(null); setPage("status"); }}>← Back</button>
           <h2 className="text-xl font-semibold mb-4">Add Request</h2>
           <input
             type="number"
@@ -202,7 +202,7 @@ export default function App() {
           </button>
         
           <button
-            onClick={() => setPage("status")}
+            onClick={() => { updateStatus(selected.id, selected); setPage("status"); }}
             className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full shadow hover:bg-blue-700"
           >
             Save
@@ -213,7 +213,7 @@ export default function App() {
 
       {page === "view" && selected && (
         <div>
-          <button className="text-blue-600 mb-4" onClick={() => setPage("status")}>← Back</button>
+          <button className="text-blue-600 mb-4" onClick={() => { setSelected(null); setPage("status"); }}>← Back</button>
           <h2 className="text-xl font-semibold mb-4">Review Request</h2>
           <p><strong>WIP:</strong> {selected.wip}</p>
           <p><strong>Reg:</strong> {selected.reg}</p>
@@ -260,7 +260,7 @@ export default function App() {
           </div>
         
           <button
-            onClick={() => setPage("status")}
+            onClick={() => { updateStatus(selected.id, selected); setPage("status"); }}
             className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full shadow hover:bg-blue-700"
           >
             Save
