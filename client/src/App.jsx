@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+
+const API = "https://tech-dash-api.onrender.com";
+
 export default function App() {
   const [page, setPage] = useState("status");
   const [requests, setRequests] = useState([]);
