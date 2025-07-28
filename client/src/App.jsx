@@ -95,6 +95,8 @@ export default function App() {
                 <th className="py-2 px-2 text-left">Reg</th>
                 <th className="py-2 px-2 text-left">Work</th>
                 <th className="py-2 px-2 text-left">Submitted At</th>
+                <th className="py-2 px-2 text-left">Hours Approved</th>
+                <th className="py-2 px-2 text-left">Hours requested</th>
 <th className="py-2 px-2 text-left">Status</th>
                 <th></th>
               </tr>
@@ -105,6 +107,7 @@ export default function App() {
                   <td className="px-2 py-1">{r.wip}</td>
                   <td className="px-2 py-1">{r.reg}</td>
                   <td className="px-2 py-1">{r.work}</td>
+                  <td className="px-2 py-1">{r.submittedAt}</td>
                   <td className="px-2 py-1">
       <span className={`text-white px-3 py-1 rounded-full text-xs ${
         r.status === "Authorised" ? "bg-green-500" :
