@@ -107,7 +107,8 @@ export default function App() {
                   <td className="px-2 py-1">{r.wip}</td>
                   <td className="px-2 py-1">{r.reg}</td>
                   <td className="px-2 py-1">{r.work}</td>
-                  <td className="px-2 py-1">{r.submittedAt}</td>
+                  <td className="px-2 py-1">{r.submittedAt.toISOString()}</td>
+                  <td className="px-2 py-1">{r.time}</td>
                   <td className="px-2 py-1">
       <span className={`text-white px-3 py-1 rounded-full text-xs ${
         r.status === "Authorised" ? "bg-green-500" :
